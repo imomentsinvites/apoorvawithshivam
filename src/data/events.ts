@@ -10,6 +10,6 @@ export const venue = {
   mapUrl: "https://share.google/HSt3v7WM95b1MMCDL",
 };
 export const rsvpContacts = [
-  { name: "Arun Mohta", phone: "9810438997" },
+  { name: "Arun Mohta", phone: "9810438897" },
   { name: "Pushpa Mohta", phone: "8010216885" },
 ];
