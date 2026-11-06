@@ -1,8 +1,8 @@
 export type WeddingEvent = { id: string; video: string };
 export const events: WeddingEvent[] = [
-  { id: "mehendi", video: "./videos/events/01-mehendi.mp4" },
-  { id: "haldi", video: "./videos/events/02-haldi.mp4" },
-  { id: "wedding", video: "./videos/events/03-wedding.mp4" },
+  { id: "mehendi", video: `${import.meta.env.BASE_URL}videos/events/01-mehendi.mp4` },
+  { id: "haldi", video: `${import.meta.env.BASE_URL}videos/events/02-haldi.mp4` },
+  { id: "wedding", video: `${import.meta.env.BASE_URL}videos/events/03-wedding.mp4` },
 ];
 export const venue = {
   name: "Maheshwari Sewa Sadan",

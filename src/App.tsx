@@ -32,18 +32,31 @@ export default function App() {
   const [scrollEnabled, setScrollEnabled] = useState(false);
   const [musicOn, setMusicOn] = useState(false);
   const [videoSound, setVideoSound] = useState(true);
+  const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
   const openInvitation = async () => {
     if (started) return;
     setStarted(true);
+
+    // Start the soundtrack and opening film from the same user gesture.
+    // Browsers permit both because this handler is triggered by the first tap.
+    const audio = musicRef.current;
+    if (audio) {
+      // Do not wait for the soundtrack to buffer before starting the film.
+      audio.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false));
+    }
+
     const video = heroVideo.current;
     if (video) {
       video.muted = !videoSound;
-      try { await video.play(); } catch { video.muted = true; await video.play().catch(() => {}); }
+      try { await video.play(); }
+      catch {
+        video.muted = true;
+        await video.play().catch(() => {});
+      }
     }
-    // Keep the invitation cinematic for the first five seconds.
-    window.setTimeout(() => setScrollEnabled(true), 5000);
-    if (musicRef.current && musicOn) musicRef.current.play().catch(() => {});
+
+    // The scroll cue appears only when the opening film finishes.
   };
 
   const toggleMusic = async () => {
@@ -54,7 +67,7 @@ export default function App() {
   };
 
   return <main>
-    <audio ref={musicRef} src="/audio/wedding-bg-music.mp3" loop preload="none" />
+    <audio ref={musicRef} src={asset("audio/wedding-bg-music.mp3")} loop preload="none" />
     <button className={`music-toggle ${started ? "is-visible" : ""}`} onClick={toggleMusic}
       aria-label={musicOn ? "Pause background music" : "Play background music"} title={musicOn ? "Pause music" : "Play music"}>
       {musicOn ? <Music size={17}/> : <Music2 size={17}/>}<span>{musicOn ? "MUSIC ON" : "MUSIC OFF"}</span>
@@ -67,17 +80,11 @@ export default function App() {
     </button>
 
     <section className={`hero ${started ? "hero-started" : "hero-waiting"}`} id="top">
-      <video ref={heroVideo} className="hero-video" src="/videos/entry.mp4"
-        poster="/images/start-image.jpg" playsInline preload="none" muted loop />
+      <video ref={heroVideo} className="hero-video" src={asset("videos/entry.mp4")}
+        poster={asset("images/start-image.jpg")} playsInline preload="none" muted onEnded={() => setScrollEnabled(true)} />
       <div className="hero-veil"/>
-      <div className="hero-frame" aria-hidden="true"><span>✧</span></div>
-      {!started && <button className="opening-prompt" onClick={openInvitation}>
-        <span className="prompt-ornament">✦</span>
-        <span className="prompt-script">A beautiful beginning</span>
-        <span className="prompt-label">TAP TO OPEN</span>
-        <span className="prompt-ring"><span>♥</span></span>
-        <span className="prompt-foot">APOORVA & SHIVAM · 24 NOVEMBER 2026</span>
-      </button>}
+      {!started && <button className="opening-tap" onClick={openInvitation}
+        aria-label="Tap to open the wedding invitation" title="Tap to open" /> }
       {started && <div className={`hero-scroll ${scrollEnabled ? "scroll-ready" : ""}`}>
         <span>{scrollEnabled ? "SCROLL TO EXPLORE" : "PLEASE ENJOY THE FILM"}</span>
         {scrollEnabled && <a href="#reveal" aria-label="Scroll to invitation"><ArrowDown size={20}/></a>}
@@ -85,8 +92,8 @@ export default function App() {
     </section>
 
     <section className="reveal-section" id="reveal">
-      <video className="scratch-bg-video" src="/videos/scratch-background.mp4"
-        poster="/images/scratch-background.jpg" muted playsInline loop preload="none" />
+      <video className="scratch-bg-video" src={asset("videos/scratch-background.mp4")}
+        poster={asset("images/scratch-background.jpg")} muted playsInline loop preload="none" aria-hidden="true" />
       <div className="scratch-bg-wash"/>
       <div className="ornament-line"><span>✧</span></div>
       <div className="section-kicker">A LITTLE SURPRISE</div>

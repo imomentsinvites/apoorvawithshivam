@@ -10,19 +10,21 @@ export default function EventSection({ event, index }: { event: WeddingEvent; in
     const video = videoRef.current;
     if (!node || !video) return;
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) video.play().catch(() => {});
-      else video.pause();
-    }, { threshold: 0.15, rootMargin: "120px 0px" });
+      if (entry.isIntersecting) {
+        // Fetch only the clip approaching the viewport; don't download every film at once.
+        video.preload = "auto";
+        video.load();
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    }, { threshold: 0.12, rootMargin: "350px 0px" });
     observer.observe(node);
     return () => { observer.disconnect(); video.pause(); };
   }, []);
 
-  return <section ref={sectionRef} className={`event-section event-${index + 1}`} id={event.id} aria-label={`Celebration film ${index + 1}`}>
-    <div className="event-video">
-      <video ref={videoRef} src={event.video} muted playsInline loop preload="none"/>
-    </div>
-    <div className="event-edge event-edge-top" aria-hidden="true"/>
-    <div className="event-edge event-edge-bottom" aria-hidden="true"/>
-    <span className="event-frame-mark" aria-hidden="true">✧</span>
+  return <section ref={sectionRef} className={`event-section event-${index + 1}`} id={event.id}
+    aria-label={`Celebration film ${index + 1}`}>
+    <video ref={videoRef} className="event-film" src={event.video} muted playsInline loop preload="none" />
   </section>;
 }
