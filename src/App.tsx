@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Navigation, Phone, Music2, Music, Heart, ArrowDown, Volume2, VolumeX } from "lucide-react";
+import { MapPin, Navigation, Phone, Music2, Music, ArrowDown, Volume2, VolumeX } from "lucide-react";
 import ScratchCard from "./components/ScratchCard";
 import EventSection from "./components/EventSection";
 import { events, venue, rsvpContacts } from "./data/events";
@@ -18,9 +18,11 @@ function Countdown() {
     ["Minutes", Math.floor((safe % 3600000) / 60000)],
     ["Seconds", Math.floor((safe % 60000) / 1000)],
   ] as const;
-  return <div className="countdown-grid">
-    {units.map(([label, value]) => <div className="count-unit" key={label}>
-      <strong>{String(value).padStart(2, "0")}</strong><span>{label}</span>
+  return <div className="countdown-ribbon" aria-label="Countdown to the wedding">
+    {units.map(([label, value], index) => <div className="countdown-unit" key={label}>
+      <strong>{String(value).padStart(2, "0")}</strong>
+      <span>{label}</span>
+      {index < units.length - 1 && <i aria-hidden="true">✧</i>}
     </div>)}
   </div>;
 }
@@ -38,25 +40,20 @@ export default function App() {
     if (started) return;
     setStarted(true);
 
-    // Start the soundtrack and opening film from the same user gesture.
-    // Browsers permit both because this handler is triggered by the first tap.
     const audio = musicRef.current;
-    if (audio) {
-      // Do not wait for the soundtrack to buffer before starting the film.
-      audio.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false));
-    }
+    if (audio) audio.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false));
 
     const video = heroVideo.current;
     if (video) {
       video.muted = !videoSound;
-      try { await video.play(); }
-      catch {
+      video.play().catch(async () => {
         video.muted = true;
         await video.play().catch(() => {});
-      }
+      });
     }
 
-    // The scroll cue appears only when the opening film finishes.
+    // Reveal the scroll cue shortly after the film begins, not when it ends.
+    window.setTimeout(() => setScrollEnabled(true), 5000);
   };
 
   const toggleMusic = async () => {
@@ -81,10 +78,10 @@ export default function App() {
 
     <section className={`hero ${started ? "hero-started" : "hero-waiting"}`} id="top">
       <video ref={heroVideo} className="hero-video" src={asset("videos/entry.mp4")}
-        poster={asset("images/start-image.jpg")} playsInline preload="none" muted onEnded={() => setScrollEnabled(true)} />
+        poster={asset("images/start-image.jpg")} playsInline preload="none" muted />
       <div className="hero-veil"/>
       {!started && <button className="opening-tap" onClick={openInvitation}
-        aria-label="Tap to open the wedding invitation" title="Tap to open" /> }
+        aria-label="Tap to open the wedding invitation" title="Tap to open"><span className="tap-prompt"><i aria-hidden="true"/>TAP ANYWHERE TO OPEN</span></button> }
       {started && <div className={`hero-scroll ${scrollEnabled ? "scroll-ready" : ""}`}>
         <span>{scrollEnabled ? "SCROLL TO EXPLORE" : "PLEASE ENJOY THE FILM"}</span>
         {scrollEnabled && <a href="#reveal" aria-label="Scroll to invitation"><ArrowDown size={20}/></a>}
@@ -114,13 +111,16 @@ export default function App() {
       <div className="section-kicker">WE WOULD LOVE TO WELCOME YOU</div>
       <h2 className="section-script">The venue</h2>
       <div className="venue-card">
-        <div className="venue-topline">✧ &nbsp; WITH LOVE &nbsp; ✧</div>
-        <div className="venue-icon"><MapPin size={24}/></div>
+        <div className="venue-topline">THE WEDDING CELEBRATION</div>
+        <div className="venue-crest" aria-hidden="true">A <span>✧</span> S</div>
+        <div className="venue-card-label">KINDLY JOIN US AT</div>
         <h3>{venue.name}</h3>
+        <div className="venue-divider"><span>❀</span></div>
         <p>{venue.address}</p>
         <a className="map-button" href={venue.mapUrl} target="_blank" rel="noreferrer">
-          <Navigation size={16}/> OPEN IN MAPS
+          <MapPin size={15}/> VIEW LOCATION <Navigation size={14}/>
         </a>
+        <div className="venue-bottomline">WE LOOK FORWARD TO CELEBRATING WITH YOU</div>
       </div>
     </section>
 
@@ -142,15 +142,14 @@ export default function App() {
     </section>
 
     <section className="countdown-section">
-      <div className="countdown-orbit" aria-hidden="true"><span>✧</span><span>♥</span><span>✧</span></div>
-      <div className="section-kicker">UNTIL OUR FOREVER BEGINS</div>
-      <h2 className="section-script">The countdown</h2>
-      <div className="forever">and then, forever</div>
+      <div className="countdown-flourish" aria-hidden="true">✧ &nbsp; ❀ &nbsp; ✧</div>
+      <div className="section-kicker">COUNTING DOWN TO</div>
+      <h2 className="countdown-forever">Forever</h2>
       <Countdown/>
-      <div className="closing-divider">✦ ───────── ♥ ───────── ✦</div>
+      <div className="countdown-rule"><span>❀</span></div>
       <h3 className="closing-names">Apoorva <span>&</span> Shivam</h3>
-      <p className="closing-date">24 NOVEMBER 2026 <i>·</i> DELHI</p>
-      <p className="closing-note">With love, and a lifetime of dreams.</p>
+      <p className="closing-date">24<sup>TH</sup> NOVEMBER 2026 <i>·</i> DELHI</p>
+      <p className="closing-note">And so, our forever begins.</p>
     </section>
     <footer><span>MADE WITH LOVE</span><span>APOORVA & SHIVAM</span><span>✧</span></footer>
     <a className="top-button" href="#top" aria-label="Back to top">↑</a>
