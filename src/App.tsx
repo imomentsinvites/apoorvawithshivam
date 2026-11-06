@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Navigation, Phone, Music2, Music, ArrowDown, Volume2, VolumeX } from "lucide-react";
+import { Phone, Music2, Music, ArrowDown, Volume2, VolumeX } from "lucide-react";
 import ScratchCard from "./components/ScratchCard";
 import EventSection from "./components/EventSection";
-import { events, venue, rsvpContacts } from "./data/events";
+import { events, rsvpContacts } from "./data/events";
+
+const BASE_URL = import.meta.env.BASE_URL;
 
 function Countdown() {
   const target = new Date("2026-11-24T19:30:00+05:30").getTime();
@@ -18,11 +20,9 @@ function Countdown() {
     ["Minutes", Math.floor((safe % 3600000) / 60000)],
     ["Seconds", Math.floor((safe % 60000) / 1000)],
   ] as const;
-  return <div className="countdown-ribbon" aria-label="Countdown to the wedding">
-    {units.map(([label, value], index) => <div className="countdown-unit" key={label}>
-      <strong>{String(value).padStart(2, "0")}</strong>
-      <span>{label}</span>
-      {index < units.length - 1 && <i aria-hidden="true">✧</i>}
+  return <div className="countdown-grid">
+    {units.map(([label, value]) => <div className="count-unit" key={label}>
+      <strong>{String(value).padStart(2, "0")}</strong><span>{label}</span>
     </div>)}
   </div>;
 }
@@ -34,26 +34,20 @@ export default function App() {
   const [scrollEnabled, setScrollEnabled] = useState(false);
   const [musicOn, setMusicOn] = useState(false);
   const [videoSound, setVideoSound] = useState(true);
-  const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
   const openInvitation = async () => {
     if (started) return;
     setStarted(true);
-
-    const audio = musicRef.current;
-    if (audio) audio.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false));
-
     const video = heroVideo.current;
     if (video) {
       video.muted = !videoSound;
-      video.play().catch(async () => {
-        video.muted = true;
-        await video.play().catch(() => {});
-      });
+      try { await video.play(); } catch { video.muted = true; await video.play().catch(() => {}); }
     }
-
-    // Reveal the scroll cue shortly after the film begins, not when it ends.
+    // Keep the invitation cinematic for the first five seconds.
     window.setTimeout(() => setScrollEnabled(true), 5000);
+    if (musicRef.current) {
+      musicRef.current.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false));
+    }
   };
 
   const toggleMusic = async () => {
@@ -64,7 +58,7 @@ export default function App() {
   };
 
   return <main>
-    <audio ref={musicRef} src={asset("audio/wedding-bg-music.mp3")} loop preload="none" />
+    <audio ref={musicRef} src={`${BASE_URL}audio/wedding-bg-music.mp3`} loop preload="none" />
     <button className={`music-toggle ${started ? "is-visible" : ""}`} onClick={toggleMusic}
       aria-label={musicOn ? "Pause background music" : "Play background music"} title={musicOn ? "Pause music" : "Play music"}>
       {musicOn ? <Music size={17}/> : <Music2 size={17}/>}<span>{musicOn ? "MUSIC ON" : "MUSIC OFF"}</span>
@@ -77,11 +71,12 @@ export default function App() {
     </button>
 
     <section className={`hero ${started ? "hero-started" : "hero-waiting"}`} id="top">
-      <video ref={heroVideo} className="hero-video" src={asset("videos/entry.mp4")}
-        poster={asset("images/start-image.jpg")} playsInline preload="none" muted />
+      <video ref={heroVideo} className="hero-video" src={`${BASE_URL}videos/entry.mp4`}
+        poster={`${BASE_URL}images/start-image.jpg`} playsInline preload="none" muted loop />
       <div className="hero-veil"/>
-      {!started && <button className="opening-tap" onClick={openInvitation}
-        aria-label="Tap to open the wedding invitation" title="Tap to open"><span className="tap-prompt"><i aria-hidden="true"/>TAP ANYWHERE TO OPEN</span></button> }
+      {!started && <button className="opening-prompt" onClick={openInvitation} aria-label="Tap anywhere to open the wedding invitation">
+        <span className="prompt-label">Tap Anywhere to Open</span>
+      </button>}
       {started && <div className={`hero-scroll ${scrollEnabled ? "scroll-ready" : ""}`}>
         <span>{scrollEnabled ? "SCROLL TO EXPLORE" : "PLEASE ENJOY THE FILM"}</span>
         {scrollEnabled && <a href="#reveal" aria-label="Scroll to invitation"><ArrowDown size={20}/></a>}
@@ -89,14 +84,19 @@ export default function App() {
     </section>
 
     <section className="reveal-section" id="reveal">
-      <video className="scratch-bg-video" src={asset("videos/scratch-background.mp4")}
-        poster={asset("images/scratch-background.jpg")} muted playsInline loop preload="none" aria-hidden="true" />
+      <video className="scratch-bg-video" src={`${BASE_URL}videos/scratch-background.mp4`}
+        poster={`${BASE_URL}images/scratch-background.jpg`} muted playsInline loop preload="none" />
       <div className="scratch-bg-wash"/>
       <div className="ornament-line"><span>✧</span></div>
       <div className="section-kicker">A LITTLE SURPRISE</div>
       <h2 className="section-script">Scratch to reveal</h2>
       <ScratchCard/>
-      <p className="reveal-caption">A touch of magic, made just for you</p>
+      <div className="celebration-intro">
+        <h2>A JOURNEY OF LOVE &amp; TRADITION</h2>
+        <p className="celebration-script">Let the Celebrations Begin</p>
+        <p className="celebration-diaries">The Celebrations Diaries</p>
+        <p className="celebration-tagline">One unforgettable journey</p>
+      </div>
       <a className="down-link" href="#events"><ArrowDown size={17}/><span>THE CELEBRATIONS</span></a>
     </section>
 
@@ -107,22 +107,7 @@ export default function App() {
     </div>
     {events.map((event, index) => <EventSection key={event.id} event={event} index={index}/> )}
 
-    <section className="venue-section" id="venue">
-      <div className="section-kicker">WE WOULD LOVE TO WELCOME YOU</div>
-      <h2 className="section-script">The venue</h2>
-      <div className="venue-card">
-        <div className="venue-topline">THE WEDDING CELEBRATION</div>
-        <div className="venue-crest" aria-hidden="true">A <span>✧</span> S</div>
-        <div className="venue-card-label">KINDLY JOIN US AT</div>
-        <h3>{venue.name}</h3>
-        <div className="venue-divider"><span>❀</span></div>
-        <p>{venue.address}</p>
-        <a className="map-button" href={venue.mapUrl} target="_blank" rel="noreferrer">
-          <MapPin size={15}/> VIEW LOCATION <Navigation size={14}/>
-        </a>
-        <div className="venue-bottomline">WE LOOK FORWARD TO CELEBRATING WITH YOU</div>
-      </div>
-    </section>
+
 
     <section className="rsvp-section" id="rsvp">
       <div className="section-kicker">YOUR PRESENCE IS OUR PRESENT</div>
@@ -142,14 +127,15 @@ export default function App() {
     </section>
 
     <section className="countdown-section">
-      <div className="countdown-flourish" aria-hidden="true">✧ &nbsp; ❀ &nbsp; ✧</div>
-      <div className="section-kicker">COUNTING DOWN TO</div>
-      <h2 className="countdown-forever">Forever</h2>
+      <div className="countdown-orbit" aria-hidden="true"><span>✧</span><span>♥</span><span>✧</span></div>
+      <div className="section-kicker">UNTIL OUR FOREVER BEGINS</div>
+      <h2 className="section-script">The countdown</h2>
+      <div className="forever">and then, forever</div>
       <Countdown/>
-      <div className="countdown-rule"><span>❀</span></div>
+      <div className="closing-divider">✦ ───────── ♥ ───────── ✦</div>
       <h3 className="closing-names">Apoorva <span>&</span> Shivam</h3>
-      <p className="closing-date">24<sup>TH</sup> NOVEMBER 2026 <i>·</i> DELHI</p>
-      <p className="closing-note">And so, our forever begins.</p>
+      <p className="closing-date">24 NOVEMBER 2026 <i>·</i> DELHI</p>
+      <p className="closing-note">With love, and a lifetime of dreams.</p>
     </section>
     <footer><span>MADE WITH LOVE</span><span>APOORVA & SHIVAM</span><span>✧</span></footer>
     <a className="top-button" href="#top" aria-label="Back to top">↑</a>

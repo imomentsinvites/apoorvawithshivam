@@ -1,20 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 
-const celebrationBits = Array.from({ length: 18 }, (_, i) => ({
-  left: `${8 + ((i * 37) % 84)}%`,
-  delay: `${(i % 6) * 90}ms`,
-  drift: `${((i % 5) - 2) * 24}px`,
-  glyph: i % 3 === 0 ? "✧" : i % 3 === 1 ? "❀" : "·",
-}));
+const REVEAL_THRESHOLD = 0.65;
 
 export default function ScratchCard() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [revealed, setRevealed] = useState(false);
-  const [hasScratched, setHasScratched] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const drawing = useRef(false);
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
-  const checkReveal = useRef(0);
+  const lastMeasure = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -22,7 +16,7 @@ export default function ScratchCard() {
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) return;
 
-    const paintCover = () => {
+    const paintFoil = () => {
       const rect = canvas.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -30,89 +24,139 @@ export default function ScratchCard() {
       canvas.height = Math.round(rect.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "#eee4d4";
+
+      // Brushed silver foil: alternating cool highlights and darker metallic bands.
+      const foil = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+      foil.addColorStop(0, "#737d88");
+      foil.addColorStop(0.12, "#eef1f4");
+      foil.addColorStop(0.25, "#aeb6bf");
+      foil.addColorStop(0.39, "#fbfcfd");
+      foil.addColorStop(0.53, "#89939e");
+      foil.addColorStop(0.68, "#e5e9ed");
+      foil.addColorStop(0.82, "#a0a9b3");
+      foil.addColorStop(1, "#f7f8fa");
+      ctx.fillStyle = foil;
       ctx.fillRect(0, 0, rect.width, rect.height);
-      ctx.strokeStyle = "rgba(166, 128, 76, .34)";
+
+      // Fine diagonal hairlines create a realistic foil grain without a patterned look.
+      ctx.save();
+      ctx.globalAlpha = 0.2;
+      for (let x = -rect.height; x < rect.width + rect.height; x += 4) {
+        ctx.strokeStyle = x % 8 === 0 ? "#ffffff" : "#53606d";
+        ctx.lineWidth = 0.55;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + rect.height, rect.height);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      const sheen = ctx.createLinearGradient(0, 0, rect.width, 0);
+      sheen.addColorStop(0, "rgba(255,255,255,0)");
+      sheen.addColorStop(0.48, "rgba(255,255,255,.48)");
+      sheen.addColorStop(0.56, "rgba(255,255,255,.06)");
+      sheen.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sheen;
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
+      // A restrained inset metallic edge.
+      ctx.strokeStyle = "rgba(255,255,255,.78)";
       ctx.lineWidth = 1;
-      ctx.strokeRect(12, 12, rect.width - 24, rect.height - 24);
-      ctx.fillStyle = "rgba(255,255,255,.34)";
-      ctx.fillRect(14, 14, rect.width - 28, 1);
+      ctx.strokeRect(8, 8, rect.width - 16, rect.height - 16);
+      ctx.strokeStyle = "rgba(55,65,76,.24)";
+      ctx.strokeRect(10, 10, rect.width - 20, rect.height - 20);
     };
 
-    paintCover();
-    const observer = new ResizeObserver(paintCover);
+    paintFoil();
+    const observer = new ResizeObserver(paintFoil);
     observer.observe(canvas);
     return () => observer.disconnect();
   }, []);
 
-  const scratch = (event: React.PointerEvent<HTMLCanvasElement>) => {
+  const measureClearedArea = (force = false) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d", { willReadFrequently: true });
+    if (!canvas || !ctx || revealed) return;
+    const now = performance.now();
+    if (!force && now - lastMeasure.current < 180) return;
+    lastMeasure.current = now;
+
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    // Sample on a regular grid; alpha 0 means the foil has been removed.
+    const stride = 4 * 12;
+    let cleared = 0;
+    let samples = 0;
+    for (let i = 3; i < pixels.length; i += stride) {
+      samples += 1;
+      if (pixels[i] < 45) cleared += 1;
+    }
+    if (samples && cleared / samples >= REVEAL_THRESHOLD) {
+      drawing.current = false;
+      setRevealed(true);
+    }
+  };
+
+  const scratchAt = (clientX: number, clientY: number) => {
     if (!drawing.current || revealed) return;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d", { willReadFrequently: true });
     if (!canvas || !ctx) return;
+
     const rect = canvas.getBoundingClientRect();
-    const point = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    const point = { x: clientX - rect.left, y: clientY - rect.top };
+    setHasStarted(true);
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = 54;
+    ctx.lineWidth = 46;
     ctx.beginPath();
     if (lastPoint.current) {
       ctx.moveTo(lastPoint.current.x, lastPoint.current.y);
       ctx.lineTo(point.x, point.y);
     } else {
-      ctx.arc(point.x, point.y, 27, 0, Math.PI * 2);
+      ctx.arc(point.x, point.y, 23, 0, Math.PI * 2);
     }
     ctx.stroke();
     lastPoint.current = point;
-
-    checkReveal.current += 1;
-    if (checkReveal.current % 7 !== 0) return;
-    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    let cleared = 0;
-    let samples = 0;
-    for (let i = 3; i < pixels.length; i += 4 * 32) {
-      samples += 1;
-      if (pixels[i] < 32) cleared += 1;
-    }
-    if (samples && cleared / samples > 0.42) setRevealed(true);
+    measureClearedArea();
   };
 
-  const stopDrawing = () => {
+  const stopScratch = () => {
     drawing.current = false;
     lastPoint.current = null;
+    measureClearedArea(true);
   };
 
   return <div className={`scratch-wrap ${revealed ? "is-revealed" : ""}`}>
     <div className="scratch-under">
-      <span className="scratch-flower">❀</span>
+      <span className="scratch-flower">✧</span>
       <span className="tiny-label">SAVE THE DATE</span>
       <strong>24 NOVEMBER</strong>
       <span className="scratch-year">2026</span>
-      <span className="scratch-flower bottom">❀</span>
+      <span className="scratch-flower bottom">✧</span>
     </div>
-    {!revealed && <canvas ref={canvasRef} className="scratch-canvas"
-      onPointerDown={e => {
-        if (revealed) return;
-        setHasScratched(true);
+    {!revealed && <canvas
+      ref={canvasRef}
+      className="scratch-canvas"
+      onPointerDown={event => {
         drawing.current = true;
         lastPoint.current = null;
-        e.currentTarget.setPointerCapture(e.pointerId);
-        scratch(e);
+        event.currentTarget.setPointerCapture(event.pointerId);
+        scratchAt(event.clientX, event.clientY);
       }}
-      onPointerMove={scratch}
-      onPointerUp={stopDrawing}
-      onPointerCancel={stopDrawing}
-      onLostPointerCapture={stopDrawing}
-      aria-label="Scratch the card to reveal the wedding date" />}
-    {!revealed && !hasScratched && <div className="scratch-hint" aria-hidden="true">
-      <span>GENTLY SCRATCH TO REVEAL</span><i>✧</i>
+      onPointerMove={event => {
+        const points = event.nativeEvent.getCoalescedEvents?.() ?? [event.nativeEvent];
+        points.forEach(point => scratchAt(point.clientX, point.clientY));
+      }}
+      onPointerUp={stopScratch}
+      onPointerCancel={stopScratch}
+      aria-label="Scratch the silver foil with your finger or mouse to reveal the wedding date"
+    />}
+    {!revealed && !hasStarted && <div className="scratch-hint">
+      <span className="coin-mark">◉</span>
+      <span>SCRATCH WITH YOUR FINGER</span>
+      <small>Like a coin on silver foil</small>
     </div>}
-    {revealed && <div className="scratch-celebration" aria-hidden="true">
-      {celebrationBits.map((bit, i) => <span key={i} style={{
-        left: bit.left, animationDelay: bit.delay, ["--drift"]: bit.drift
-      } as CSSProperties}>{bit.glyph}</span>)}
-    </div>}
-    {revealed && <div className="scratch-again">A LITTLE MAGIC, JUST FOR YOU <span>✧</span></div>}
+    {revealed && <div className="scratch-again">THE DATE IS REVEALED <span>✧</span></div>}
   </div>;
 }
