@@ -1,3 +1,5 @@
+import { ChevronDown } from "lucide-react";
+
 export default function ScrollCue({ visible = false }: { visible?: boolean }) {
   return (
     <a
@@ -8,8 +10,7 @@ export default function ScrollCue({ visible = false }: { visible?: boolean }) {
       tabIndex={visible ? 0 : -1}
     >
       <span>SCROLL TO EXPLORE</span>
-      <i aria-hidden="true">⌄</i>
-      <i aria-hidden="true">⌄</i>
+      <ChevronDown size={19} strokeWidth={1.5} aria-hidden="true" />
     </a>
   );
 }

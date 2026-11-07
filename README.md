@@ -1,34 +1,6 @@
-# Apoorva & Shivam — Cinematic Wedding Invitation
+# Apoorva & Shivam — Wedding Invitation
 
-Mobile-first React + TypeScript + Vite wedding invitation, designed around a 9:16 visual system.
-
-## Entry experience
-- The opening screen shows only the supplied entry-video poster and a small translucent `Tap to Open` pill.
-- Tapping anywhere starts `public/videos/entry.mp4`.
-- Scrolling stays locked for the first 6 seconds after the tap.
-- The scroll arrow appears after those 6 seconds.
-
-## Scratch card
-- Original canvas-based scratch interaction is preserved.
-- Original scratch background image is retained but faded softly behind the card.
-
-## Illustrated event scenes
-All event illustrations are original text-free 1080 × 1920 SVG backgrounds in `public/images/scenes/`.
-They contain no loose falling petals; the small event-specific moving particles are generated separately in CSS.
-
-- Mehendi — 22 November 2026, 1:30 PM; followed by lunch; Maheshwari Sewa Sadan.
-- Haldi — 23 November 2026, 10:30 AM; followed by lunch; Maheshwari Sewa Sadan.
-- Tilak & Sangeet — 23 November 2026, 7:00 PM; followed by dinner; City Park.
-- Bhaat — 24 November 2026, 10:30 AM; followed by lunch; Maheshwari Sewa Sadan.
-- Baraat Swagat — 24 November 2026, 8:00 PM; dinner at 9:30 PM; The Sherioan by Kawatra, Victoria Hall.
-
-Each event has its own address, Google Maps link, soft translucent ivory text panel, scroll reveal, and blended top/bottom transitions. There is no separate Venue section.
-
-## RSVP
-- Arun Mohta — 9810438897
-- Pushpa Mohta — 8010216885
-
-## Run locally
+## Run
 ```bash
 npm install
 npm run dev
@@ -38,3 +10,24 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## Required images
+Keep these seven files exactly at these paths. All are 1080 × 1920 px (9:16):
+- `public/images/entry-poster.jpg` — opening poster before the video starts
+- `public/images/scenes/scratch-garden.jpg` — scratch-card section
+- `public/images/scenes/mehendi-garden.jpg` — Mehendi
+- `public/images/scenes/haldi-courtyard.jpg` — Haldi
+- `public/images/scenes/sangeet-courtyard.jpg` — Tilak & Sangeet (new matching illustration)
+- `public/images/scenes/bhaat-courtyard.jpg` — Bhaat
+- `public/images/scenes/wedding-mandap.jpg` — Baraat Swagat / wedding finale
+
+## Entry video
+`public/videos/entry.mp4`
+
+The entry screen shows only the poster and a small “Tap to Open” pill. On tap, the video starts. Scrolling and the small scroll cue are enabled after six seconds.
+
+## Event details
+Edit `src/data/events.ts`. Each event has its own address and map link. No separate Venue slide is rendered.
+
+## RSVP
+Contact numbers are in `src/data/events.ts`. The WhatsApp action uses a WhatsApp mark, and the phone action uses a call icon.
