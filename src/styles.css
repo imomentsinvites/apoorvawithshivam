@@ -20,9 +20,9 @@ button{font:inherit}
 .hero.entry-started .hero-video{opacity:1}
 .tap-open-wrap{position:absolute;left:0;right:0;bottom:max(38px,env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:5;pointer-events:none}
 .tap-open-pill{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;padding:9px 22px 10px;border-radius:999px;background:rgba(255,246,237,.72);border:1px solid rgba(255,255,255,.7);color:#793d43;font:500 15px 'Cormorant Garamond',serif;letter-spacing:.06em;box-shadow:0 4px 18px rgba(77,35,37,.10);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.scroll-cue{position:absolute;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:12;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#fff9f0;text-shadow:0 2px 10px rgba(54,24,30,.65);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .7s ease,visibility .7s ease}
+.scroll-cue{position:absolute;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:12;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 20px 7px;border-radius:999px;background:rgba(255,246,237,.88);border:1px solid rgba(160,110,70,.45);box-shadow:0 4px 16px rgba(60,20,30,.28);text-decoration:none;color:#6a1229;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .7s ease,visibility .7s ease}
 .scroll-cue-visible{opacity:1;visibility:visible;pointer-events:auto}
-.scroll-cue span{font-size:8px;letter-spacing:.2em}
+.scroll-cue span{font-size:11px;font-weight:700;letter-spacing:.2em}
 .scroll-cue svg{display:block;animation:cueNudge 1.5s ease-in-out infinite}
 
 /* Scratch card */
@@ -33,21 +33,22 @@ button{font:inherit}
 .scratch-scene-content{position:relative;z-index:4;width:min(100%,720px);margin:auto}
 .scene-subtitle{font:italic 19px 'Cormorant Garamond',serif;color:#85695e;margin:0 auto 26px}
 .scratch-scene .script-heading{color:#7b263d;text-shadow:none}
-.scratch-card{width:min(620px,92vw);margin:30px auto 18px;position:relative;padding:11px;border-radius:23px;background:linear-gradient(135deg,#fff0b9,#a76d2e 22%,#f6d88e 46%,#9b602b 75%,#f7d68b);box-shadow:0 16px 55px #4d201f55,0 0 0 2px #ffedbd,0 0 28px #ffdf8c77}
-.scratch-card:before{content:"";position:absolute;inset:5px;border:1px solid rgba(255,244,201,.88);border-radius:18px;pointer-events:none;z-index:5}
-.scratch-card-inner{position:relative;min-height:245px;border-radius:15px;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#fff8df 0%,#f6dfaa 38%,#c58c48 100%);display:grid;place-items:center}
-.scratch-card-inner:before,.scratch-card-inner:after{content:"✿";position:absolute;color:#a76d38;font-size:36px;opacity:.7;z-index:1;top:12px;left:16px;text-shadow:0 1px 0 #fff0bd}
-.scratch-card-inner:after{left:auto;right:16px;transform:scaleX(-1)}
-.scratch-reveal-copy{display:flex;flex-direction:column;align-items:center;gap:8px;color:#70232e;position:relative;z-index:0;padding:24px 15px}
-.scratch-label{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#986a38}
-.scratch-reveal-copy strong{font:clamp(26px,5vw,43px) 'Playfair Display',serif;font-weight:400;text-align:center}
-.scratch-heart{font-size:22px;color:#b46c3d}
-.scratch-reveal-copy small{font:italic 16px 'Cormorant Garamond',serif;color:#916b45}
+.scratch-card{width:min(460px,78vw);margin:26px auto 18px;position:relative;padding:9px;border-radius:20px;background:linear-gradient(135deg,#fff0b9,#a76d2e 22%,#f6d88e 46%,#9b602b 75%,#f7d68b);box-shadow:0 16px 55px #4d201f55,0 0 0 2px #ffedbd,0 0 28px #ffdf8c77}
+.scratch-card:before{content:"";position:absolute;inset:4px;border:1px solid rgba(255,244,201,.88);border-radius:16px;pointer-events:none;z-index:5}
+.scratch-card-inner{position:relative;min-height:175px;border-radius:13px;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#fff8df 0%,#f6dfaa 38%,#c58c48 100%);display:grid;place-items:center}
+.scratch-reveal-copy{display:flex;flex-direction:column;align-items:center;gap:6px;color:#70232e;position:relative;z-index:0;padding:18px 12px}
+.scratch-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#986a38}
+.scratch-reveal-copy strong{font:clamp(22px,4.4vw,32px) 'Playfair Display',serif;font-weight:400;text-align:center}
+.scratch-heart{font-size:18px;color:#b46c3d}
+.scratch-reveal-copy small{font:italic 15px 'Cormorant Garamond',serif;color:#916b45}
 .scratch-foil{position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:none;cursor:crosshair}
-.scratch-overlay-prompt{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 10px 20px;pointer-events:none;color:#fff7df;text-shadow:0 1px 5px #6d431c}
-.scratch-overlay-prompt span{font-size:28px;animation:twinkle 1.7s ease-in-out infinite}
+.scratch-overlay-prompt{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 10px 14px;pointer-events:none;color:#fff7df;text-shadow:0 1px 5px #6d431c}
+.scratch-overlay-prompt span{font-size:24px;animation:twinkle 1.7s ease-in-out infinite}
 .scratch-overlay-prompt b{font:16px 'Cormorant Garamond',serif;letter-spacing:.08em}
 .scratch-bottom-note{position:relative;z-index:6;display:block;width:fit-content;max-width:calc(100% - 24px);margin:12px auto 3px;padding:7px 20px 8px;border-radius:999px;background:linear-gradient(135deg,#6a1c2d,#4f1421);border:1px solid #f3d792;box-shadow:0 3px 10px rgba(60,20,20,.35);text-align:center;color:#fff4d8;font:italic 600 18px 'Cormorant Garamond',serif;letter-spacing:.05em}
+button.scratch-bottom-note{cursor:pointer;display:flex;align-items:center;gap:8px;transition:filter .25s,transform .25s}
+button.scratch-bottom-note:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.scratch-bottom-note small{font:600 10px 'Cormorant Garamond',serif;font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:#f3d792;padding-left:10px;border-left:1px solid rgba(243,215,146,.5)}
 .scratch-caption{font:italic 16px 'Cormorant Garamond',serif;color:#85695e}
 .scroll-link{display:flex;align-items:center;flex-direction:column;gap:8px;margin:28px auto 0;text-decoration:none;color:#8c6049}
 .scroll-link span{font-size:9px;letter-spacing:.2em}
@@ -121,7 +122,7 @@ button{font:inherit}
 .rsvp-footnote{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:48px;color:#a36e70;font-style:italic}
 
 /* Finale */
-.finale-scene{position:relative;text-align:center;overflow:hidden;padding:110px 22px 105px;background:linear-gradient(180deg,#f6e3dc,#f9eee5 50%,#f3ddd5)}
+.finale-scene{position:relative;text-align:center;overflow:hidden;padding:110px 22px 36px;background:linear-gradient(180deg,#f6e3dc,#f9eee5 50%,#f3ddd5)}
 .finale-arch{position:absolute;left:50%;top:35px;transform:translateX(-50%);width:min(80vw,500px);height:500px;border:1px solid #d6b083;border-bottom:0;border-radius:250px 250px 0 0;opacity:.4;pointer-events:none}
 .forever{font:clamp(54px,12vw,82px) 'Great Vibes',cursive;color:#c17b91;margin:-12px 0 24px}
 .countdown-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:min(450px,94vw);margin:0 auto}
@@ -132,8 +133,8 @@ button{font:inherit}
 .closing-names{font:clamp(42px,9vw,62px) 'Great Vibes',cursive;color:#a84961;font-weight:400;margin:12px 0 0}
 .closing-names span{color:#b88a50}
 .closing-date{font-size:11px;letter-spacing:.22em;color:#8f6b5b}
-.closing-heart{color:#bd7891;margin-top:15px}
-footer{text-align:center;padding:22px 10px;background:#eddbd2;color:#9b806a;font-size:9px;letter-spacing:.2em}
+.closing-heart{display:block;margin:12px auto 0;color:#bd7891}
+footer{text-align:center;padding:14px 10px;background:#eddbd2;color:#9b806a;font-size:9px;letter-spacing:.2em}
 .top-button{position:fixed;right:15px;bottom:16px;width:39px;height:39px;display:grid;place-items:center;text-decoration:none;border-radius:50%;background:rgba(255,250,244,.9);border:1px solid #d7c1a5;color:#96734c;z-index:45;box-shadow:0 3px 12px #321e141a}
 
 @keyframes particleFall{0%{transform:translate3d(0,-5vh,0) rotate(0deg) scale(var(--scale));opacity:0}10%{opacity:.85}50%{transform:translate3d(var(--drift),52vh,0) rotate(190deg) scale(var(--scale))}90%{opacity:.7}100%{transform:translate3d(calc(var(--drift)*-.55),110vh,0) rotate(360deg) scale(var(--scale));opacity:0}}
@@ -148,11 +149,11 @@ footer{text-align:center;padding:22px 10px;background:#eddbd2;color:#9b806a;font
  .event-details{font-size:21px}
  .event-location{font-size:18px}
  .event-side-note{display:none}
- .scratch-card-inner{min-height:220px}
+ .scratch-card-inner{min-height:160px}
  .rsvp-scene{padding:95px 22px 110px}
  .rsvp-row{padding:25px 4px}
 }
-@media(max-width:390px){.scratch-card{padding:8px}.scratch-card-inner{min-height:195px}}
+@media(max-width:390px){.scratch-card{padding:7px}.scratch-card-inner{min-height:150px}}
 @media(prefers-reduced-motion:reduce){
  *,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
  [data-reveal]{opacity:1;transform:none;filter:none}
