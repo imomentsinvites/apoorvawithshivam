@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowDown, MapPin, Navigation, Heart, Phone, MessageCircle } from "lucide-react";
+import ScrollCue from "./components/ScrollCue";
 import ScratchCard from "./components/ScratchCard";
 import EventSection from "./components/EventSection";
 import { events, venue, rsvpContacts } from "./data/events";
@@ -40,63 +41,21 @@ function Countdown() {
 }
 
 export default function App() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [entryStarted, setEntryStarted] = useState(false);
-  const [canScroll, setCanScroll] = useState(false);
-  const [musicOn, setMusicOn] = useState(true);
-
-  useEffect(() => {
-    document.body.classList.toggle("entry-locked", !canScroll);
-    return () => document.body.classList.remove("entry-locked");
-  }, [canScroll]);
-
-  const openInvitation = async () => {
-    if (entryStarted) return;
-    setEntryStarted(true);
-    const video = videoRef.current;
-    if (video) {
-      video.muted = false;
-      try { await video.play(); } catch {
-        // The tap remains accepted; the visitor can retry playback from the screen.
-      }
-    }
-    window.setTimeout(() => setCanScroll(true), 6000);
-  };
-
-  const toggleMusic = () => {
-    const next = !musicOn;
-    setMusicOn(next);
-    if (videoRef.current) videoRef.current.muted = !next;
-  };
-
   return <main className="wedding-site">
     <RevealObserver />
 
-    <section className={`hero ${entryStarted ? "entry-playing" : "entry-waiting"}`} id="top">
-      <video
-        ref={videoRef}
-        className="hero-video"
-        src="/videos/entry.mp4"
-        poster="/images/scenes/entry-poster.jpg"
-        muted={!musicOn}
-        playsInline
-        loop
-        preload="metadata"
-        aria-label="Wedding invitation entry video"
-      />
-      {!entryStarted && (
-        <button className="entry-tap" type="button" onClick={openInvitation}>
-          Tap to open
-        </button>
-      )}
-      {entryStarted && (
-        <button className="music-medallion" type="button" onClick={toggleMusic} aria-label={musicOn ? "Mute music" : "Play music"}>
-          {musicOn ? "♫" : "♪"}
-        </button>
-      )}
-      {canScroll && <a className="scroll-cue" href="#reveal" aria-label="Scroll to explore">
-        <span>SCROLL TO EXPLORE</span><i aria-hidden="true">⌄</i><i aria-hidden="true">⌄</i>
-      </a>}
+    <section className="hero" id="top">
+      <video className="hero-video" src="/videos/entry.mp4" muted playsInline autoPlay loop preload="metadata" />
+      <div className="hero-wash"/><span className="music-medallion" aria-hidden="true">♫</span>
+      <div className="hero-vine hero-vine-left" aria-hidden="true"/>
+      <div className="hero-vine hero-vine-right" aria-hidden="true"/>
+      <div className="hero-copy">
+        <span className="eyebrow">WITH THE BLESSINGS OF OUR FAMILIES</span>
+        <h1>Apoorva <i>&</i> Shivam</h1>
+        <p>joyfully invite you to celebrate their wedding</p>
+        <span className="hero-date">22 — 24 NOVEMBER 2026</span>
+      </div>
+      <ScrollCue />
     </section>
 
     <section className="scratch-scene" id="reveal">

@@ -1,12 +1,1 @@
-ENTRY VIDEO PLACEHOLDER
-
-Upload your final clean entry video here as:
-  public/videos/entry.mp4
-
-Required format:
-  1080 x 1920 pixels (9:16 portrait)
-  MP4 (H.264 video; AAC audio recommended)
-
-The website shows public/images/scenes/entry-poster.jpg before the visitor taps "Tap to open".
-On tap, entry.mp4 plays with its audio. The scroll cue appears and scrolling unlocks after 6 seconds.
-The music button toggles the entry video's audio.
+Add your vertical opening video here and name it entry.mp4.

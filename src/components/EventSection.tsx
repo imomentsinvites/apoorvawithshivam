@@ -1,15 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import type { WeddingEvent } from "../data/events";
 
-function getParticleStyle(index: number): CSSProperties & { "--drift": string } {
-  return {
-    left: `${(index * 43 + 6) % 100}%`,
-    animationDelay: `${(index * 1.4) % 12}s`,
-    animationDuration: `${12 + (index % 5) * 2}s`,
-    "--drift": `${((index % 5) - 2) * 35}px`,
-  };
-}
+const particleType: Record<string, "leaf" | "marigold" | "rose"> = {
+  mehendi: "leaf",
+  haldi: "marigold",
+  wedding: "rose",
+};
 
 export default function EventSection({ event, index }: { event: WeddingEvent; index: number }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -18,37 +14,36 @@ export default function EventSection({ event, index }: { event: WeddingEvent; in
     const node = sectionRef.current;
     if (!node) return;
     const observer = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), {
-      threshold: .2, rootMargin: "0px 0px -10% 0px"
+      threshold: 0.22, rootMargin: "0px 0px -10% 0px",
     });
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
-  const kind = event.id === "mehendi" ? "leaf" : event.id === "haldi" ? "marigold" : "rose";
-  return <section ref={sectionRef} className={`event-section event-${event.id} ${active ? "event-active" : ""}`} id={event.id}>
-    <div className="event-art" aria-hidden="true">
-      <img src={`/images/scenes/${event.id}.svg`} alt=""/>
-      <span className="event-art-vignette"/>
-    </div>
-    <div className="event-arch-frame" aria-hidden="true"/>
-    <div className="event-content">
-      <div className="event-copy">
-        <span className="event-number">0{index+1}</span>
-        <span className="event-eyebrow">{event.eyebrow}</span>
-        <span className="event-date">{event.dateLabel}</span>
-        <h2>{event.title}</h2>
-        <div className="event-rule"><i>✦</i></div>
-        <div className="event-times">
-          <span>{event.time}</span>
-          {event.secondary && <span><b>{event.secondary.title}</b> · {event.secondary.time}</span>}
-        </div>
-        <span className="followed-lunch">Followed by Lunch</span>
+
+  return <section ref={sectionRef} className={`event-scene event-${event.id} ${active ? "is-active" : ""}`} id={event.id}>
+    <div className={`scene-background event-background event-background-${event.id}`} aria-hidden="true"/>
+    <div className="scene-vignette"/>
+    <div className="event-ornament event-ornament-top" aria-hidden="true">✦</div>
+    <div className={`event-story-content ${index % 2 ? "align-right" : "align-left"}`}>
+      <span className="event-index" data-reveal>0{index + 1} / 03</span>
+      <span className="eyebrow event-eyebrow" data-reveal>{event.eyebrow}</span>
+      <span className="event-date" data-reveal>{event.dateLabel}</span>
+      <h2 data-reveal>{event.title}</h2>
+      <div className="event-divider" data-reveal><i>✦</i></div>
+      <div className="event-times" data-reveal>
+        <span>{event.time}</span>
+        {event.secondary && <span><b>{event.secondary.title}</b> · {event.secondary.time}</span>}
       </div>
+      <span className="followed-lunch" data-reveal>Followed by Lunch</span>
     </div>
-    <div className={`event-particles ${kind}`} aria-hidden="true">
-      {Array.from({ length: 15 }, (_, i) => (
-        <i key={i} style={getParticleStyle(i)} />
-      ))}
+    <div className={`scene-particles particles-${particleType[event.id]}`} aria-hidden="true">
+      {Array.from({length: event.id === "wedding" ? 18 : 14},(_,i)=><i key={i} style={{
+        left:`${(i*43+4)%100}%`, animationDelay:`${(i*1.3)%13}s`,
+        animationDuration:`${11+(i%6)*2.1}s`,
+        ["--drift" as string]:`${((i%2===0)?1:-1)*(16+(i%4)*12)}px`,
+        ["--scale" as string]:`${.55+(i%4)*.16}`,
+      }}/>)}
     </div>
-    <span className="event-side-note" aria-hidden="true">A DAY TO REMEMBER</span>
+    <span className="event-side-script" aria-hidden="true">{event.id === "mehendi" ? "Mehendi ki raat" : event.id === "haldi" ? "Haldi ke rang" : "Shubh vivah"}</span>
   </section>;
 }
