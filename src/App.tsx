@@ -74,12 +74,6 @@ export default function App() {
     };
   }, [scrollEnabled]);
 
-  useEffect(() => {
-    if (!entryStarted) return;
-    const unlock = window.setTimeout(() => setScrollEnabled(true), 6000);
-    return () => window.clearTimeout(unlock);
-  }, [entryStarted]);
-
   const openInvitation = async () => {
     if (entryStarted) return;
     setEntryStarted(true);
@@ -88,7 +82,8 @@ export default function App() {
       try {
         await video.play();
       } catch {
-        // Keep the poster visible if the browser blocks playback.
+        // Playback blocked: don't leave the visitor stuck on the entry screen.
+        setScrollEnabled(true);
       }
     }
   };
@@ -119,6 +114,8 @@ export default function App() {
           poster={POSTER_URL}
           playsInline
           preload="none"
+          onEnded={() => setScrollEnabled(true)}
+          onError={() => setScrollEnabled(true)}
         />
         {!entryStarted && (
           <div className="tap-open-wrap">
