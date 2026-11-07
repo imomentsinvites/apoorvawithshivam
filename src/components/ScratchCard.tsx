@@ -1,5 +1,37 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 
+// 24 Nov 2026, 8:00 PM IST = 14:30 UTC; 3 hour block.
+const ICS = [
+  "BEGIN:VCALENDAR",
+  "VERSION:2.0",
+  "PRODID:-//Apoorva and Shivam//Wedding//EN",
+  "BEGIN:VEVENT",
+  "UID:apoorva-shivam-baraat-20261124@wedding",
+  "DTSTAMP:20261101T000000Z",
+  "DTSTART:20261124T143000Z",
+  "DTEND:20261124T173000Z",
+  "SUMMARY:Apoorva & Shivam - Wedding (Baraat Swagat)",
+  "LOCATION:The Sherioan by Kawatra\\, Victoria Hall",
+  "BEGIN:VALARM",
+  "TRIGGER:-P1D",
+  "ACTION:DISPLAY",
+  "DESCRIPTION:Apoorva & Shivam's wedding is tomorrow",
+  "END:VALARM",
+  "END:VEVENT",
+  "END:VCALENDAR",
+].join("\r\n");
+
+function saveTheDate() {
+  const url = URL.createObjectURL(new Blob([ICS], { type: "text/calendar;charset=utf-8" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "apoorva-shivam-wedding.ics";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 export default function ScratchCard() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -78,6 +110,10 @@ export default function ScratchCard() {
         onPointerCancel={()=>{drawing.current=false;lastPoint.current=null;}}/>}
       {!revealed&&<div className="scratch-overlay-prompt" aria-hidden="true"><span>✧</span><b>Scratch to reveal</b></div>}
     </div>
-    <span className="scratch-bottom-note">{revealed?"A date to remember ✦":"Use your finger to gently scratch"}</span>
+    {revealed
+      ? <button type="button" className="scratch-bottom-note" onClick={saveTheDate} aria-label="A date to remember: add the wedding to your calendar">
+          A date to remember ✦ <small>Add to calendar</small>
+        </button>
+      : <span className="scratch-bottom-note">Use your finger to gently scratch</span>}
   </div>;
 }
