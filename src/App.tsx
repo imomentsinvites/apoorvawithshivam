@@ -6,6 +6,10 @@ import ScratchCard from "./components/ScratchCard";
 import EventSection from "./components/EventSection";
 import { events, rsvpContacts } from "./data/events";
 
+// Prefixed with BASE_URL so assets resolve when hosted under a sub-path (GitHub Pages).
+const POSTER_URL = `${import.meta.env.BASE_URL}images/entry-poster.jpg`;
+const VIDEO_URL = `${import.meta.env.BASE_URL}videos/entry.mp4`;
+
 function RevealObserver() {
   useEffect(() => {
     const items = document.querySelectorAll<HTMLElement>("[data-reveal]");
@@ -107,12 +111,12 @@ export default function App() {
           }
         }}
       >
-        <img className="hero-poster" src="/images/entry-poster.jpg" alt="" />
+        <img className="hero-poster" src={POSTER_URL} alt="" />
         <video
           ref={videoRef}
           className="hero-video"
-          src="/videos/entry.mp4"
-          poster="/images/entry-poster.jpg"
+          src={VIDEO_URL}
+          poster={POSTER_URL}
           playsInline
           preload="none"
           onClick={(event) => event.stopPropagation()}
