@@ -1,10 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import { Phone, Music2, Music, ArrowDown, Volume2, VolumeX } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDown, MapPin, Navigation, Heart, Phone, MessageCircle } from "lucide-react";
+import ScrollCue from "./components/ScrollCue";
 import ScratchCard from "./components/ScratchCard";
 import EventSection from "./components/EventSection";
-import { events, rsvpContacts } from "./data/events";
+import { events, venue, rsvpContacts } from "./data/events";
 
-const BASE_URL = import.meta.env.BASE_URL;
+function RevealObserver() {
+  useEffect(() => {
+    const items = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle("is-visible", entry.isIntersecting);
+      });
+    }, { threshold: 0.14, rootMargin: "0px 0px -7% 0px" });
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
+  return null;
+}
 
 function Countdown() {
   const target = new Date("2026-11-24T19:30:00+05:30").getTime();
@@ -12,132 +25,127 @@ function Countdown() {
   useEffect(() => {
     const timer = window.setInterval(() => setRemaining(target - Date.now()), 1000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [target]);
   const safe = Math.max(0, remaining);
   const units = [
-    ["Days", Math.floor(safe / 86400000)],
-    ["Hours", Math.floor((safe % 86400000) / 3600000)],
-    ["Minutes", Math.floor((safe % 3600000) / 60000)],
-    ["Seconds", Math.floor((safe % 60000) / 1000)],
+    ["DAYS", Math.floor(safe / 86400000)],
+    ["HOURS", Math.floor((safe % 86400000) / 3600000)],
+    ["MINUTES", Math.floor((safe % 3600000) / 60000)],
+    ["SECONDS", Math.floor((safe % 60000) / 1000)],
   ] as const;
   return <div className="countdown-grid">
-    {units.map(([label, value]) => <div className="count-unit" key={label}>
+    {units.map(([label, value], index) => <div className="count-unit" data-reveal key={label} style={{ transitionDelay: `${index * 90}ms` }}>
       <strong>{String(value).padStart(2, "0")}</strong><span>{label}</span>
     </div>)}
   </div>;
 }
 
 export default function App() {
-  const heroVideo = useRef<HTMLVideoElement>(null);
-  const musicRef = useRef<HTMLAudioElement>(null);
-  const [started, setStarted] = useState(false);
-  const [scrollEnabled, setScrollEnabled] = useState(false);
-  const [musicOn, setMusicOn] = useState(false);
-  const [videoSound, setVideoSound] = useState(true);
+  return <main className="wedding-site">
+    <RevealObserver />
 
-  const openInvitation = async () => {
-    if (started) return;
-    setStarted(true);
-    const video = heroVideo.current;
-    if (video) {
-      video.muted = !videoSound;
-      try { await video.play(); } catch { video.muted = true; await video.play().catch(() => {}); }
-    }
-    // Keep the invitation cinematic for the first five seconds.
-    window.setTimeout(() => setScrollEnabled(true), 5000);
-    if (musicRef.current) {
-      musicRef.current.play().then(() => setMusicOn(true)).catch(() => setMusicOn(false));
-    }
-  };
-
-  const toggleMusic = async () => {
-    const audio = musicRef.current;
-    if (!audio) return;
-    if (musicOn) { audio.pause(); setMusicOn(false); }
-    else { setMusicOn(true); await audio.play().catch(() => setMusicOn(false)); }
-  };
-
-  return <main>
-    <audio ref={musicRef} src={`${BASE_URL}audio/wedding-bg-music.mp3`} loop preload="none" />
-    <button className={`music-toggle ${started ? "is-visible" : ""}`} onClick={toggleMusic}
-      aria-label={musicOn ? "Pause background music" : "Play background music"} title={musicOn ? "Pause music" : "Play music"}>
-      {musicOn ? <Music size={17}/> : <Music2 size={17}/>}<span>{musicOn ? "MUSIC ON" : "MUSIC OFF"}</span>
-    </button>
-    <button className={`video-sound ${started ? "is-visible" : ""}`} onClick={() => {
-      const next = !videoSound; setVideoSound(next);
-      if (heroVideo.current) heroVideo.current.muted = !next;
-    }} aria-label={videoSound ? "Mute opening video" : "Unmute opening video"}>
-      {videoSound ? <Volume2 size={17}/> : <VolumeX size={17}/>}
-    </button>
-
-    <section className={`hero ${started ? "hero-started" : "hero-waiting"}`} id="top">
-      <video ref={heroVideo} className="hero-video" src={`${BASE_URL}videos/entry.mp4`}
-        poster={`${BASE_URL}images/start-image.jpg`} playsInline preload="none" muted loop />
-      <div className="hero-veil"/>
-      {!started && <button className="opening-prompt" onClick={openInvitation} aria-label="Tap anywhere to open the wedding invitation">
-        <span className="prompt-label">Tap Anywhere to Open</span>
-      </button>}
-      {started && <div className={`hero-scroll ${scrollEnabled ? "scroll-ready" : ""}`}>
-        <span>{scrollEnabled ? "SCROLL TO EXPLORE" : "PLEASE ENJOY THE FILM"}</span>
-        {scrollEnabled && <a href="#reveal" aria-label="Scroll to invitation"><ArrowDown size={20}/></a>}
-      </div>}
-    </section>
-
-    <section className="reveal-section" id="reveal">
-      <video className="scratch-bg-video" src={`${BASE_URL}videos/scratch-background.mp4`}
-        poster={`${BASE_URL}images/scratch-background.jpg`} muted playsInline loop preload="none" />
-      <div className="scratch-bg-wash"/>
-      <div className="ornament-line"><span>✧</span></div>
-      <div className="section-kicker">A LITTLE SURPRISE</div>
-      <h2 className="section-script">Scratch to reveal</h2>
-      <ScratchCard/>
-      <div className="celebration-intro">
-        <h2>A JOURNEY OF LOVE &amp; TRADITION</h2>
-        <p className="celebration-script">Let the Celebrations Begin</p>
-        <p className="celebration-diaries">The Celebrations Diaries</p>
-        <p className="celebration-tagline">One unforgettable journey</p>
+    <section className="hero" id="top">
+      <video className="hero-video" src="/videos/entry.mp4" muted playsInline autoPlay loop preload="metadata" />
+      <div className="hero-wash"/><span className="music-medallion" aria-hidden="true">♫</span>
+      <div className="hero-vine hero-vine-left" aria-hidden="true"/>
+      <div className="hero-vine hero-vine-right" aria-hidden="true"/>
+      <div className="hero-copy">
+        <span className="eyebrow">WITH THE BLESSINGS OF OUR FAMILIES</span>
+        <h1>Apoorva <i>&</i> Shivam</h1>
+        <p>joyfully invite you to celebrate their wedding</p>
+        <span className="hero-date">22 — 24 NOVEMBER 2026</span>
       </div>
-      <a className="down-link" href="#events"><ArrowDown size={17}/><span>THE CELEBRATIONS</span></a>
+      <ScrollCue />
     </section>
 
-    <div className="events-intro" id="events">
-      <span className="section-kicker">SAVE THE MOMENTS</span>
-      <h2 className="section-script">The festivities</h2>
-      <div className="ornament-line"><span>❀</span></div>
+    <section className="scratch-scene" id="reveal">
+      <div className="scene-background scratch-background" aria-hidden="true"/>
+      <div className="scene-vignette"/>
+      <div className="hanging-garland garland-left" aria-hidden="true"/>
+      <div className="hanging-garland garland-right" aria-hidden="true"/>
+      <div className="scratch-scene-content">
+        <span className="eyebrow light-eyebrow" data-reveal>A LITTLE SURPRISE FOR YOU</span>
+        <h2 className="script-heading" data-reveal>The celebration begins</h2>
+        <p className="scene-subtitle" data-reveal>One beautiful date. A lifetime of memories.</p>
+        <ScratchCard />
+        <p className="scratch-caption" data-reveal>Gently scratch to uncover the special dates</p>
+        <a className="scroll-link light-link" href="#festivities"><span>SCROLL TO EXPLORE</span><ArrowDown size={18}/></a>
+      </div>
+      <SceneParticles type="rose" count={11}/>
+    </section>
+
+    <section className="festivities-intro" id="festivities">
+      <div className="intro-flourish" data-reveal>❧ ✦ ❧</div>
+      <span className="eyebrow" data-reveal>THREE DAYS · A THOUSAND MEMORIES</span>
+      <h2 className="script-heading" data-reveal>The Wedding Festivities</h2>
+      <p data-reveal>Come together for rituals, laughter, music and moments to treasure forever.</p>
+    </section>
+
+    <div className="event-story">
+      {events.map((event, index) => <EventSection key={event.id} event={event} index={index} />)}
     </div>
-    {events.map((event, index) => <EventSection key={event.id} event={event} index={index}/> )}
 
+    <section className="venue-scene" id="venue">
+      <div className="scene-background venue-background" aria-hidden="true"/>
+      <div className="scene-vignette"/>
+      <div className="venue-copy">
+        <span className="eyebrow light-eyebrow" data-reveal>A PLACE FOR OUR FAVOURITE PEOPLE</span>
+        <h2 className="script-heading" data-reveal>The Venue</h2>
+        <div className="venue-plaque" data-reveal>
+          <span className="plaque-flower">✿</span>
+          <MapPin size={25}/>
+          <h3>{venue.name}</h3>
+          <p>{venue.address}</p>
+          <a className="gold-button" href={venue.mapUrl} target="_blank" rel="noreferrer">
+            <Navigation size={15}/> GET DIRECTIONS
+          </a>
+        </div>
+      </div>
+      <SceneParticles type="glow" count={9}/>
+    </section>
 
-
-    <section className="rsvp-section" id="rsvp">
-      <div className="section-kicker">YOUR PRESENCE IS OUR PRESENT</div>
-      <h2 className="rsvp-title">R S V P</h2>
-      <p className="rsvp-intro">For any assistance, please reach out to our family.</p>
+    <section className="rsvp-scene" id="rsvp">
+      <div className="rsvp-border"/>
+      <span className="eyebrow" data-reveal>YOUR PRESENCE IS OUR PRESENT</span>
+      <h2 className="script-heading" data-reveal>R S V P</h2>
+      <p className="rsvp-intro" data-reveal>For timings, travel, or anything at all.</p>
       <div className="rsvp-list">
-        {rsvpContacts.map(contact => <div className="rsvp-row" key={contact.phone}>
+        {rsvpContacts.map((contact, index) => <div className="rsvp-row" data-reveal style={{transitionDelay:`${index*120}ms`}} key={contact.phone}>
           <div className="rsvp-person"><span>{contact.name}</span><a href={`tel:${contact.phone}`}>{contact.phone}</a></div>
           <div className="rsvp-actions">
-            <a className="rsvp-action call" href={`tel:${contact.phone}`} aria-label={`Call ${contact.name}`}><Phone size={18}/><span>CALL</span></a>
-            <a className="rsvp-action whatsapp" href={`https://wa.me/91${contact.phone}`} target="_blank" rel="noreferrer" aria-label={`WhatsApp ${contact.name}`}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.5 0 .2 5.3.2 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.7 1.5h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.3-6.2-3.6-8.4ZM12.1 21.8h-.1a9.9 9.9 0 0 1-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2c0-5.5 4.5-10 10-10a9.9 9.9 0 0 1 7.1 2.9 9.9 9.9 0 0 1 2.9 7.1c0 5.5-4.5 10-10 10Zm5.5-7.5c-.3-.2-1.7-.9-2-.9s-.5-.2-.7.2c-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.5.1-.6l.4-.5.3-.5c.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.4-.4-.6-.4h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.1-1.3-.1-.2-.3-.3-.6-.4Z"/></svg><span>WHATSAPP</span>
-            </a>
+            <a className="rsvp-action call" href={`tel:${contact.phone}`} aria-label={`Call ${contact.name}`}><Phone size={17}/></a>
+            <a className="rsvp-action whatsapp" href={`https://wa.me/91${contact.phone}`} target="_blank" rel="noreferrer" aria-label={`WhatsApp ${contact.name}`}><MessageCircle size={17}/></a>
           </div>
         </div>)}
       </div>
+      <p className="rsvp-footnote" data-reveal><Heart size={14}/> We can't wait to celebrate with you</p>
+      <SceneParticles type="rose" count={7}/>
     </section>
 
-    <section className="countdown-section">
-      <div className="countdown-orbit" aria-hidden="true"><span>✧</span><span>♥</span><span>✧</span></div>
-      <div className="section-kicker">UNTIL OUR FOREVER BEGINS</div>
-      <h2 className="section-script">The countdown</h2>
-      <div className="forever">and then, forever</div>
+    <section className="finale-scene">
+      <div className="finale-arch" aria-hidden="true"/>
+      <span className="eyebrow" data-reveal>THE MOMENT IS GETTING CLOSER</span>
+      <h2 className="script-heading" data-reveal>Counting down to</h2>
+      <div className="forever" data-reveal>Forever</div>
       <Countdown/>
-      <div className="closing-divider">✦ ───────── ♥ ───────── ✦</div>
-      <h3 className="closing-names">Apoorva <span>&</span> Shivam</h3>
-      <p className="closing-date">24 NOVEMBER 2026 <i>·</i> DELHI</p>
-      <p className="closing-note">With love, and a lifetime of dreams.</p>
+      <div className="finale-divider" data-reveal>✦ ❧ ✦</div>
+      <h3 className="closing-names" data-reveal>Apoorva <span>&</span> Shivam</h3>
+      <p className="closing-date" data-reveal>24 NOVEMBER 2026 · DELHI</p>
+      <Heart className="closing-heart" size={18}/>
     </section>
-    <footer><span>MADE WITH LOVE</span><span>APOORVA & SHIVAM</span><span>✧</span></footer>
+    <footer>MADE WITH LOVE · APOORVA & SHIVAM</footer>
     <a className="top-button" href="#top" aria-label="Back to top">↑</a>
   </main>;
+}
+
+function SceneParticles({ type, count }: { type: "rose" | "marigold" | "leaf" | "glow"; count: number }) {
+  return <div className={`scene-particles particles-${type}`} aria-hidden="true">
+    {Array.from({length:count},(_,i)=><i key={i} style={{
+      left:`${(i*37+9)%100}%`,
+      animationDelay:`${(i*1.61)%12}s`,
+      animationDuration:`${12+(i%5)*2.2}s`,
+      ["--drift" as string]:`${((i%2===0)?1:-1)*(18+(i%4)*11)}px`,
+      ["--scale" as string]:`${.55+(i%4)*.16}`,
+    }}/>)}
+  </div>;
 }
