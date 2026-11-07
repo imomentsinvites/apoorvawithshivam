@@ -25,24 +25,24 @@ export default function ScratchCard() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.globalCompositeOperation = "source-over";
 
-      // Brushed silver foil: alternating cool highlights and darker metallic bands.
+      // Warm champagne-gold foil to match the invitation's blush and antique-gold palette.
       const foil = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-      foil.addColorStop(0, "#737d88");
-      foil.addColorStop(0.12, "#eef1f4");
-      foil.addColorStop(0.25, "#aeb6bf");
-      foil.addColorStop(0.39, "#fbfcfd");
-      foil.addColorStop(0.53, "#89939e");
-      foil.addColorStop(0.68, "#e5e9ed");
-      foil.addColorStop(0.82, "#a0a9b3");
-      foil.addColorStop(1, "#f7f8fa");
+      foil.addColorStop(0, "#8e6330");
+      foil.addColorStop(0.14, "#f5dfaa");
+      foil.addColorStop(0.28, "#bd8d45");
+      foil.addColorStop(0.44, "#fff0c8");
+      foil.addColorStop(0.58, "#c69a55");
+      foil.addColorStop(0.76, "#f8e4b4");
+      foil.addColorStop(0.9, "#aa7938");
+      foil.addColorStop(1, "#f3d99e");
       ctx.fillStyle = foil;
       ctx.fillRect(0, 0, rect.width, rect.height);
 
-      // Fine diagonal hairlines create a realistic foil grain without a patterned look.
+      // Fine diagonal foil grain.
       ctx.save();
-      ctx.globalAlpha = 0.2;
+      ctx.globalAlpha = 0.16;
       for (let x = -rect.height; x < rect.width + rect.height; x += 4) {
-        ctx.strokeStyle = x % 8 === 0 ? "#ffffff" : "#53606d";
+        ctx.strokeStyle = x % 8 === 0 ? "#fff9e9" : "#805522";
         ctx.lineWidth = 0.55;
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -53,17 +53,17 @@ export default function ScratchCard() {
 
       const sheen = ctx.createLinearGradient(0, 0, rect.width, 0);
       sheen.addColorStop(0, "rgba(255,255,255,0)");
-      sheen.addColorStop(0.48, "rgba(255,255,255,.48)");
-      sheen.addColorStop(0.56, "rgba(255,255,255,.06)");
+      sheen.addColorStop(0.48, "rgba(255,250,224,.5)");
+      sheen.addColorStop(0.56, "rgba(255,255,255,.08)");
       sheen.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = sheen;
       ctx.fillRect(0, 0, rect.width, rect.height);
 
       // A restrained inset metallic edge.
-      ctx.strokeStyle = "rgba(255,255,255,.78)";
+      ctx.strokeStyle = "rgba(255,249,225,.88)";
       ctx.lineWidth = 1;
       ctx.strokeRect(8, 8, rect.width - 16, rect.height - 16);
-      ctx.strokeStyle = "rgba(55,65,76,.24)";
+      ctx.strokeStyle = "rgba(91,58,20,.24)";
       ctx.strokeRect(10, 10, rect.width - 20, rect.height - 20);
     };
 
@@ -150,12 +150,12 @@ export default function ScratchCard() {
       }}
       onPointerUp={stopScratch}
       onPointerCancel={stopScratch}
-      aria-label="Scratch the silver foil with your finger or mouse to reveal the wedding date"
+      aria-label="Scratch the golden foil with your finger or mouse to reveal the wedding date"
     />}
     {!revealed && !hasStarted && <div className="scratch-hint">
-      <span className="coin-mark">◉</span>
-      <span>SCRATCH WITH YOUR FINGER</span>
-      <small>Like a coin on silver foil</small>
+      <span className="scratch-sparkle">✧</span>
+      <span>SCRATCH TO REVEAL</span>
+      <small>Use your finger or mouse</small>
     </div>}
     {revealed && <div className="scratch-again">THE DATE IS REVEALED <span>✧</span></div>}
   </div>;
