@@ -67,7 +67,7 @@ export default function ScratchCard() {
     <div className="scratch-card-inner">
       <div className="scratch-reveal-copy">
         <span className="scratch-label">OUR WEDDING DATES</span>
-        <strong>22 — 24 November 2026</strong>
+        <strong>24 November 2026</strong>
         <span className="scratch-heart">♥</span>
         <small>The beginning of forever</small>
       </div>
