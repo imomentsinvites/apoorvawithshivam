@@ -119,7 +119,6 @@ export default function App() {
           poster={POSTER_URL}
           playsInline
           preload="none"
-          onClick={(event) => event.stopPropagation()}
         />
         {!entryStarted && (
           <div className="tap-open-wrap">
