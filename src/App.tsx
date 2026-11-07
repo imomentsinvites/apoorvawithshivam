@@ -114,6 +114,10 @@ export default function App() {
           poster={POSTER_URL}
           playsInline
           preload="none"
+          onTimeUpdate={(event) => {
+            const { currentTime, duration } = event.currentTarget;
+            if (duration && duration - currentTime <= 5) setScrollEnabled(true);
+          }}
           onEnded={() => setScrollEnabled(true)}
           onError={() => setScrollEnabled(true)}
         />
