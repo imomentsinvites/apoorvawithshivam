@@ -1,54 +1,40 @@
-import { useEffect, useRef } from "react";
-import { MapPin, Navigation } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import type { WeddingEvent } from "../data/events";
 
 export default function EventSection({ event, index }: { event: WeddingEvent; index: number }) {
   const sectionRef = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(false);
 
   useEffect(() => {
     const node = sectionRef.current;
     if (!node) return;
-    let frame = 0;
-    const update = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const rect = node.getBoundingClientRect();
-        const viewport = window.innerHeight || 1;
-        const progress = Math.max(0, Math.min(1, (viewport - rect.top) / (viewport + rect.height)));
-        node.style.setProperty("--scroll-progress", progress.toFixed(3));
-        node.classList.toggle("is-in-view", rect.top < viewport * 0.78 && rect.bottom > viewport * 0.22);
-      });
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
+    const observer = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), {
+      threshold: 0.18,
+      rootMargin: "0px 0px -12% 0px",
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
-  return <section ref={sectionRef} className={`event-section event-${index + 1} theme-${event.theme}`} id={event.id} aria-label={`${event.title} celebration`}>
+  return <section ref={sectionRef} className={`event-section event-${event.id} ${active ? "event-active" : ""}`} id={event.id}>
     <div className="event-art" aria-hidden="true">
-      <div className="event-art-image" style={{ backgroundImage: `url("${event.artwork}")` }} />
-      <div className="event-art-wash" />
-      <div className="floating-petals"><i/><i/><i/><i/><i/><i/></div>
-      <span className="ambient-glow glow-one"/><span className="ambient-glow glow-two"/>
+      <img src={`/images/events/${event.id}.svg`} alt="" />
+      <div className="art-glow" />
     </div>
-    <div className="event-copy">
-      <span className="event-eyebrow">THE CELEBRATION · 0{index + 1}</span>
-      <span className="event-date">{event.date}</span>
-      <h2>{event.title}</h2>
-      <span className="event-flourish" aria-hidden="true">✧ ─── ❀ ─── ✧</span>
-      <div className="event-schedule">{event.schedule.map(line => <p className="event-time" key={line}>{line}</p>)}</div>
-      {event.note && <p className="event-note">{event.note}</p>}
-      <a className="event-venue-link" href={event.mapUrl} target="_blank" rel="noreferrer">
-        <MapPin size={15} />
-        <span><strong>{event.venueName}</strong><small>{event.venueAddress}</small></span>
-        <Navigation size={14} />
-      </a>
+    <div className="event-content">
+      <span className="event-number">0{index + 1}</span>
+      <div className="event-copy">
+        <span className="event-eyebrow">{event.eyebrow}</span>
+        <span className="event-date">{event.dateLabel}</span>
+        <h2>{event.title}</h2>
+        <div className="event-rule"><i>✦</i></div>
+        <div className="event-times">
+          <span>{event.time}</span>
+          {event.secondary && <span><b>{event.secondary.title}</b> · {event.secondary.time}</span>}
+        </div>
+        <span className="followed-lunch">Followed by Lunch</span>
+      </div>
     </div>
-    <div className="event-scroll-caption" aria-hidden="true">A STORY IN EVERY CELEBRATION <span>↓</span></div>
+    <span className="event-side-note" aria-hidden="true">A DAY TO REMEMBER</span>
   </section>;
 }
