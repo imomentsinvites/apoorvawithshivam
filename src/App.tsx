@@ -146,7 +146,7 @@ export default function App() {
       </section>
 
       <section className="festivities-intro" id="festivities">
-        <div className="intro-flourish" data-reveal>✦ ◆ ✦</div>
+        <div className="intro-flourish" data-reveal>✦ ✦ ✦</div>
         <span className="eyebrow" data-reveal>THREE DAYS · FIVE CELEBRATIONS</span>
         <h2 className="script-heading" data-reveal>The Wedding Festivities</h2>
         <p data-reveal>Come together for rituals, laughter, music and moments to treasure forever.</p>
@@ -193,7 +193,7 @@ export default function App() {
         <h2 className="script-heading" data-reveal>Counting down to</h2>
         <div className="forever" data-reveal>Forever</div>
         <Countdown />
-        <div className="finale-divider" data-reveal>✦ ◆ ✦</div>
+        <div className="finale-divider" data-reveal>✦ ✦ ✦</div>
         <h3 className="closing-names" data-reveal>Apoorva <span>&</span> Shivam</h3>
         <p className="closing-date" data-reveal>24 NOVEMBER 2026</p>
         <Heart className="closing-heart" size={18} />
