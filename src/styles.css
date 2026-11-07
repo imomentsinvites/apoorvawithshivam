@@ -140,3 +140,93 @@ footer{text-align:center;padding:22px 10px;background:#eddbd2;color:#9b806a;font
 @media(max-width:680px){.event-scene{min-height:88svh;padding:90px 8vw}.event-story-content,.align-right,.align-left{text-align:center;margin:0 auto}.event-divider,.align-right .event-divider{margin:20px auto}.event-side-script{display:none}.event-scene .scene-vignette{background:linear-gradient(90deg,rgba(75,30,32,.18),rgba(75,30,32,.22)),linear-gradient(180deg,rgba(75,30,32,.08),rgba(75,30,32,.22))}.scratch-card-inner{min-height:220px}.scratch-scene,.venue-scene{min-height:700px}.hanging-garland{width:35%}}
 @media(max-width:390px){.music-medallion{width:44px;height:44px;right:18px;top:18px}.scratch-card{padding:8px}.scratch-card-inner{min-height:195px}.rsvp-action{width:42px;height:42px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}[data-reveal]{opacity:1;transform:none;filter:none}}
+
+
+/* Mobile-first cinematic entry and portrait scene backgrounds */
+body.entry-locked { overflow: hidden; height: 100%; }
+.hero {
+  min-height: 100svh;
+  height: 100svh;
+  padding: 0;
+  display: block;
+  background: #f4c9cf url('/images/scenes/entry-poster.jpg') center center / cover no-repeat;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  background: transparent;
+}
+.hero-wash, .hero-copy, .hero-vine { display: none !important; }
+.entry-tap {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: max(7.5%, 42px);
+  transform: translateX(-50%);
+  border: 0;
+  background: transparent;
+  color: #7b172c;
+  padding: 12px 24px;
+  font: italic 24px 'Cormorant Garamond', serif;
+  text-shadow: 0 1px 10px rgba(255,245,230,.95);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.entry-tap::after {
+  content: '⌄';
+  display: block;
+  font: 28px/1 Georgia, serif;
+  margin-top: 2px;
+  animation: cueBob 1.4s ease-in-out infinite;
+}
+.music-medallion {
+  position: absolute;
+  z-index: 5;
+  right: 18px;
+  top: 18px;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #d9b77f;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255,244,222,.9);
+  color: #842b36;
+  font: 26px Georgia, serif;
+  box-shadow: 0 4px 15px #67301f22;
+  cursor: pointer;
+}
+.scroll-cue {
+  z-index: 6;
+  bottom: 22px;
+  color: #7b172c;
+  padding: 8px 18px;
+  border-radius: 30px;
+  background: rgba(255,242,229,.72);
+  backdrop-filter: blur(5px);
+  animation: cueFadeIn .8s ease both;
+}
+.scroll-cue span { font-size: 10px; letter-spacing: .2em; }
+.scroll-cue i { font-size: 26px; }
+@keyframes cueFadeIn { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.scene-background, .event-background {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.scratch-background { background-image: url('/images/scenes/scratch-garden.jpg'); }
+.venue-background { background-image: url('/images/scenes/venue-palace.jpg'); }
+.event-background-mehendi { background-image: url('/images/scenes/mehendi-garden.jpg'); }
+.event-background-haldi { background-image: url('/images/scenes/haldi-courtyard.jpg'); }
+.event-background-bhaat { background-image: url('/images/scenes/bhaat-courtyard.jpg'); }
+.event-background-wedding { background-image: url('/images/scenes/wedding-mandap.jpg'); }
+@media (max-width: 680px) {
+  .hero { min-height: 100svh; height: 100svh; }
+  .event-scene { min-height: 100svh; padding: 76px 24px; background-position: center; }
+  .scratch-scene, .venue-scene { min-height: 100svh; padding: 86px 20px 80px; }
+}

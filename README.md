@@ -37,3 +37,18 @@ Build:
 ```bash
 npm run build
 ```
+
+
+## Portrait background assets and entry flow
+
+All website scene backgrounds are included in `public/images/scenes/` at **1080 × 1920 px (9:16)**.
+
+The opening screen displays `entry-poster.jpg` with only the “Tap to open” prompt. The visitor's tap starts `public/videos/entry.mp4` with audio. After 6 seconds, the animated “SCROLL TO EXPLORE” cue appears and scrolling unlocks. The music icon toggles the entry video's audio.
+
+To add the final entry video, place a clean **1080 × 1920 px (9:16)** MP4 at `public/videos/entry.mp4`. The old screen-recording clip has been removed so it cannot show embedded browser text or controls.
+
+Run:
+```bash
+npm install
+npm run dev
+```

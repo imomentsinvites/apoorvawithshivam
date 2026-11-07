@@ -4,7 +4,7 @@ import type { WeddingEvent } from "../data/events";
 const particleType: Record<string, "leaf" | "marigold" | "rose"> = {
   mehendi: "leaf",
   haldi: "marigold",
-  wedding: "rose",
+  wedding: "rose",\n  bhaat: "rose",
 };
 
 export default function EventSection({ event, index }: { event: WeddingEvent; index: number }) {
@@ -25,7 +25,7 @@ export default function EventSection({ event, index }: { event: WeddingEvent; in
     <div className="scene-vignette"/>
     <div className="event-ornament event-ornament-top" aria-hidden="true">✦</div>
     <div className={`event-story-content ${index % 2 ? "align-right" : "align-left"}`}>
-      <span className="event-index" data-reveal>0{index + 1} / 03</span>
+      <span className="event-index" data-reveal>0{index + 1} / 04</span>
       <span className="eyebrow event-eyebrow" data-reveal>{event.eyebrow}</span>
       <span className="event-date" data-reveal>{event.dateLabel}</span>
       <h2 data-reveal>{event.title}</h2>
@@ -44,6 +44,6 @@ export default function EventSection({ event, index }: { event: WeddingEvent; in
         ["--scale" as string]:`${.55+(i%4)*.16}`,
       }}/>)}
     </div>
-    <span className="event-side-script" aria-hidden="true">{event.id === "mehendi" ? "Mehendi ki raat" : event.id === "haldi" ? "Haldi ke rang" : "Shubh vivah"}</span>
+    <span className="event-side-script" aria-hidden="true">{event.id === "mehendi" ? "Mehendi ki raat" : event.id === "haldi" ? "Haldi ke rang" : event.id === "bhaat" ? "Parivaar ka utsav" : "Shubh vivah"}</span>
   </section>;
 }

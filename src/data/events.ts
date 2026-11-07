@@ -23,11 +23,17 @@ export const events: WeddingEvent[] = [
     eyebrow: "Sunshine, smiles & blessings",
   },
   {
+    id: "bhaat",
+    dateLabel: "24 November 2026",
+    title: "Bhaat",
+    time: "Morning · 10:00 AM",
+    eyebrow: "Family, blessings & togetherness",
+  },
+  {
     id: "wedding",
     dateLabel: "24 November 2026",
-    title: "Bhaat & Wedding",
-    time: "Bhaat · Morning 10:00 AM",
-    secondary: { title: "Wedding", time: "7:30 PM onwards" },
+    title: "Wedding",
+    time: "7:30 PM onwards",
     eyebrow: "The beginning of forever",
   },
 ];
