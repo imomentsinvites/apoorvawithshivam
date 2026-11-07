@@ -39,7 +39,7 @@ export const events: WeddingEvent[] = [
     title: "Tilak & Sangeet",
     time: "7:00 PM",
     meal: "Followed by dinner",
-    location: "Rajmahal Hall, City Park",
+    location: "Rajmahal Hall, Hotel City Park, Pitampura",
     mapUrl: "https://share.google/GMkJULWXaG93Ktsdm",
     eyebrow: "An evening of music & celebration",
     particle: "rose",
