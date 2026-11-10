@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Apoorva and Shivam//Wedding//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:apoorva-shivam-baraat-20261124@wedding
+DTSTAMP:20261101T000000Z
+DTSTART:20261124T143000Z
+DTEND:20261124T173000Z
+SUMMARY:Apoorva & Shivam - Wedding (Baraat Swagat)
+LOCATION:The Sherioan by Kawatra\, Victoria Hall
+DESCRIPTION:Apoorva & Shivam's wedding celebration.
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Apoorva & Shivam's wedding is tomorrow
+END:VALARM
+END:VEVENT
+END:VCALENDAR
