@@ -147,7 +147,7 @@ export default function App() {
 
       <section className="festivities-intro" id="festivities">
         <div className="intro-flourish" data-reveal>✦ ✦ ✦</div>
-        <span className="eyebrow" data-reveal>THREE DAYS · FIVE CELEBRATIONS</span>
+        <span className="eyebrow" data-reveal>CELEBRATION DIARIES · ONE UNFORGETTABLE JOURNEY</span>
         <h2 className="script-heading" data-reveal>The Wedding Festivities</h2>
         <p data-reveal>Come together for rituals, laughter, music and moments to treasure forever.</p>
       </section>
