@@ -98,9 +98,8 @@ export default function ScratchCard() {
   return <div className={`scratch-card ${revealed?"scratch-revealed":""}`}>
     <div className="scratch-card-inner">
       <div className="scratch-reveal-copy">
-        <span className="scratch-label">OUR WEDDING DATES</span>
+        <span className="scratch-label">OUR WEDDING DATE</span>
         <strong>24 November 2026</strong>
-        <span className="scratch-heart">♥</span>
         <small>The beginning of forever</small>
       </div>
       {!revealed&&<canvas ref={canvasRef} className="scratch-foil" aria-label="Scratch to reveal the wedding dates"
@@ -112,7 +111,7 @@ export default function ScratchCard() {
     </div>
     {revealed
       ? <button type="button" className="scratch-bottom-note" onClick={saveTheDate} aria-label="A date to remember: add the wedding to your calendar">
-          A date to remember ✦ <small>Add to calendar</small>
+          A date to remember <small>Add to calendar</small>
         </button>
       : <span className="scratch-bottom-note">Use your finger to gently scratch</span>}
   </div>;

@@ -3,7 +3,7 @@ import { MapPin, ExternalLink } from "lucide-react";
 import type { CSSProperties } from "react";
 import type { WeddingEvent } from "../data/events";
 
-export default function EventSection({ event, index }: { event: WeddingEvent; index: number }) {
+export default function EventSection({ event }: { event: WeddingEvent }) {
   const sectionRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(false);
 
@@ -43,7 +43,6 @@ export default function EventSection({ event, index }: { event: WeddingEvent; in
 
       <div className="event-content-wrap">
         <div className="event-info-panel">
-          <span className="event-index">{String(index + 1).padStart(2, "0")} <i>✦</i> 05</span>
           <span className="eyebrow event-eyebrow">{event.eyebrow}</span>
           <span className="event-date">{event.dateLabel}</span>
           <h2 id={`${event.id}-title`}>{event.title}</h2>
