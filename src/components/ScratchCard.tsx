@@ -1,35 +1,23 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 
 // 24 Nov 2026, 8:00 PM IST = 14:30 UTC; 3 hour block.
-const ICS = [
-  "BEGIN:VCALENDAR",
-  "VERSION:2.0",
-  "PRODID:-//Apoorva and Shivam//Wedding//EN",
-  "BEGIN:VEVENT",
-  "UID:apoorva-shivam-baraat-20261124@wedding",
-  "DTSTAMP:20261101T000000Z",
-  "DTSTART:20261124T143000Z",
-  "DTEND:20261124T173000Z",
-  "SUMMARY:Apoorva & Shivam - Wedding (Baraat Swagat)",
-  "LOCATION:The Sherioan by Kawatra\\, Victoria Hall",
-  "BEGIN:VALARM",
-  "TRIGGER:-P1D",
-  "ACTION:DISPLAY",
-  "DESCRIPTION:Apoorva & Shivam's wedding is tomorrow",
-  "END:VALARM",
-  "END:VEVENT",
-  "END:VCALENDAR",
-].join("\r\n");
+const GOOGLE_CALENDAR_URL = "https://calendar.google.com/calendar/render?" + new URLSearchParams({
+  action: "TEMPLATE",
+  text: "Apoorva & Shivam - Wedding (Baraat Swagat)",
+  dates: "20261124T143000Z/20261124T173000Z",
+  location: "The Sherioan by Kawatra, Victoria Hall",
+  details: "Apoorva & Shivam's wedding celebration.",
+}).toString();
 
 function saveTheDate() {
-  const url = URL.createObjectURL(new Blob([ICS], { type: "text/calendar;charset=utf-8" }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "apoorva-shivam-wedding.ics";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  if (isApple) {
+    // Served as text/calendar, so iOS Safari offers "Add to Calendar" directly.
+    window.location.href = `${import.meta.env.BASE_URL}apoorva-shivam-wedding.ics`;
+  } else {
+    window.open(GOOGLE_CALENDAR_URL, "_blank", "noopener");
+  }
 }
 
 export default function ScratchCard() {
