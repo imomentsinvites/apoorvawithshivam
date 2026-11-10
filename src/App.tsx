@@ -153,8 +153,8 @@ export default function App() {
       </section>
 
       <div className="event-story">
-        {events.map((event, index) => (
-          <EventSection key={event.id} event={event} index={index} />
+        {events.map((event) => (
+          <EventSection key={event.id} event={event} />
         ))}
       </div>
 
