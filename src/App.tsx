@@ -222,7 +222,7 @@ export default function App() {
         <p className="closing-date" data-reveal>24 NOVEMBER 2026</p>
         <Heart className="closing-heart" size={18} />
       </section>
-      <footer>MADE WITH LOVE · APOORVA & SHIVAM</footer>
+      <footer>MADE WITH LOVE · APOORVA WEDS SHIVAM</footer>
       <a className="top-button" href="#top" aria-label="Back to top">↑</a>
     </main>
   );
