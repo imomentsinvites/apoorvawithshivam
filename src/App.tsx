@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowDown, Heart, Phone } from "lucide-react";
+import { ArrowDown, Heart, Phone, Volume2, VolumeX } from "lucide-react";
 import ScrollCue from "./components/ScrollCue";
 import ScratchCard from "./components/ScratchCard";
 import EventSection from "./components/EventSection";
@@ -9,6 +9,7 @@ import { events, rsvpContacts } from "./data/events";
 // Prefixed with BASE_URL so assets resolve when hosted under a sub-path (GitHub Pages).
 const POSTER_URL = `${import.meta.env.BASE_URL}images/entry-poster.jpg`;
 const VIDEO_URL = `${import.meta.env.BASE_URL}videos/entry.mp4`;
+const MUSIC_URL = `${import.meta.env.BASE_URL}audio/wedding-bg-music.mp3`;
 
 function RevealObserver() {
   useEffect(() => {
@@ -55,6 +56,8 @@ function Countdown() {
 
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [muted, setMuted] = useState(false);
   const [entryStarted, setEntryStarted] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(false);
 
@@ -77,6 +80,12 @@ export default function App() {
   const openInvitation = async () => {
     if (entryStarted) return;
     setEntryStarted(true);
+    // Started inside the tap handler so browsers allow audio.
+    const music = audioRef.current;
+    if (music) {
+      music.volume = 0.6;
+      music.play().catch(() => setMuted(true));
+    }
     const video = videoRef.current;
     if (video) {
       try {
@@ -91,6 +100,21 @@ export default function App() {
   return (
     <main className="wedding-site">
       <RevealObserver />
+      <audio ref={audioRef} src={MUSIC_URL} loop preload="auto" muted={muted} />
+      {entryStarted && (
+        <button
+          type="button"
+          className="music-toggle"
+          aria-label={muted ? "Turn music on" : "Turn music off"}
+          onClick={() => {
+            const music = audioRef.current;
+            if (muted && music?.paused) music.play().catch(() => undefined);
+            setMuted(!muted);
+          }}
+        >
+          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
+      )}
 
       <section
         className={`hero ${entryStarted ? "entry-started" : ""} ${scrollEnabled ? "entry-scroll-enabled" : ""}`}
