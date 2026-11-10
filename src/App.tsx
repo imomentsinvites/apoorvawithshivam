@@ -218,7 +218,7 @@ export default function App() {
         <div className="forever" data-reveal>Forever</div>
         <Countdown />
         <div className="finale-divider" data-reveal>✦ ✦ ✦</div>
-        <h3 className="closing-names" data-reveal>Apoorva <span>&</span> Shivam</h3>
+        <h3 className="closing-names" data-reveal>Apoorva <span>weds</span> Shivam</h3>
         <p className="closing-date" data-reveal>24 NOVEMBER 2026</p>
         <Heart className="closing-heart" size={18} />
       </section>
