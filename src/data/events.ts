@@ -61,7 +61,7 @@ export const events: WeddingEvent[] = [
     title: "Baraat Swagat",
     time: "8:00 PM",
     meal: "Dinner · 9:30 PM",
-    location: "The Sherioan by Kawatra, Victoria Hall",
+    location: "The Sherioan by Kawatra, Victoria Hall, Road No. 43, Near DCP Office(North Distt.), Parmath Road, Pitampura, Delhi-110034",
     mapUrl: "https://maps.app.goo.gl/Sb7R4hoatxybVxHw8?g_st=aw",
     eyebrow: "The grand celebration",
     particle: "rose",
